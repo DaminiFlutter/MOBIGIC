@@ -12,14 +12,16 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
-  int index = 0,noOfTextField =0;
-  String searchText='';
+  int index = 0, noOfTextField = 0;
+  String searchText = '';
+  var list = [];
+  late Map<int, TextEditingController> indexList;
   final TextEditingController _rowController = TextEditingController();
   final TextEditingController _columnController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   late AnimationController _rowAnimationController;
   late AnimationController _columnAnimationController;
-  List<TextEditingController> _gridTextControllers = [];
-  List<TextField> _fields = [];
+  final List<TextEditingController> _gridTextControllers = [];
   bool shouldCreateGrid = false, isContain = false;
   FocusNode _rowFocus = FocusNode();
   FocusNode _columnFocus = FocusNode();
@@ -92,10 +94,11 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             });
             int rowLength = int.parse(_rowController.text);
             int columnLength = int.parse(_columnController.text);
-             noOfTextField = rowLength * columnLength;
+            noOfTextField = rowLength * columnLength;
             for (var j = 0; j < noOfTextField; j++) {
               final controller = TextEditingController();
               _gridTextControllers.add(controller);
+              list.add(j);
             }
           }
         },
@@ -181,37 +184,39 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           SizedBox(
                             width: width - 100,
                             child: TextField(
-                              // controller: controller,
+                              controller: _searchController,
                               onChanged: (value) {
-                                // var list = _gridTextControllers.where(
-                                //        (element) => element.text.contains(value)
-                                //        ).toList();
-                                _gridTextControllers.any((element) {
-                                  element.text.contains(value);
-                                  setState(() {
-                                    isContain = true;
-                                    searchText = value;
-                                  });
-                                  return true;
-                                });
-                                // for(var i=0; i< _gridTextControllers.length;i++){
-                                //   if(_gridTextControllers[i].text.contains(value)){
-                                //     print("Index => $i");
-                                //   }
-                                // }
+                                searchText = _searchController.text;
+                                print("list => $list");
+                                for (var i = 0;
+                                    i < _gridTextControllers.length;
+                                    i++) {
+
+                                  if (_gridTextControllers[i]
+                                      .text
+                                      .toLowerCase()
+                                      .contains(value.toLowerCase())) {
+                                    setState(() {
+                                      list[i]=true;
+                                    });
+                                    print("Indexlist => $list");
+                                  }
+                                  else{
+                                    list[i]=false;
+                                  }
+                                }
                                 //  print("Search list => $list");
                               },
-
                               keyboardType: TextInputType.text,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                   // labelText: "Search text",
                                   hintText: "Search text",
-                                  focusedBorder: const OutlineInputBorder(
+                                  focusedBorder: OutlineInputBorder(
                                       borderRadius:
                                           BorderRadius.all(Radius.circular(25)),
                                       borderSide: BorderSide(
                                           width: 1, color: Colors.blue)),
-                                  border: const OutlineInputBorder(
+                                  border: OutlineInputBorder(
                                       borderRadius:
                                           BorderRadius.all(Radius.circular(25)),
                                       borderSide: BorderSide(
@@ -224,8 +229,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           const SizedBox(
                             height: 20,
                           ),
-                          for(var x=0;x< noOfTextField;x++)
-                            _gridTextControllers.any((element) => element.text.contains(searchText))?
+                          // for(var x=0;x< noOfTextField;x++)
+                          //   _gridTextControllers.any((element) => element.text.toLowerCase().contains(searchText.toLowerCase()))?
                           GridView.builder(
                             physics: NeverScrollableScrollPhysics(),
                             itemCount: int.parse(_rowController.text) *
@@ -246,10 +251,14 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 18.0),
                                 child: Container(
-                                  height: 30,
-                                  width: 30,
-                                  decoration: const BoxDecoration(
-                                      color: Colors.greenAccent,
+                                  height: 50,
+                                  width: 50,
+                                  decoration: BoxDecoration(
+                                      color: _searchController.text.isNotEmpty
+                                          ? list[index] == true
+                                              ? Colors.greenAccent
+                                              : Colors.white
+                                          : Colors.grey,
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(18))),
                                   child: Center(
@@ -257,17 +266,18 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                     controller: _gridTextControllers[index],
                                     dragStartBehavior: DragStartBehavior.start,
                                     textDirection: TextDirection.ltr,
-                                    readOnly: true,
                                     decoration: InputDecoration(
-
-                                      contentPadding: EdgeInsets.symmetric(horizontal: 25,vertical: 15),
-                                      border: InputBorder.none,
+                                        contentPadding: EdgeInsets.symmetric(
+                                            horizontal: 25, vertical: 15),
+                                        border: InputBorder.none,
                                         hintText: "Enter a word"),
                                   )),
                                 ),
                               );
                             },
-                          ):SizedBox.shrink(),
+                          )
+                          //     :
+                          // SizedBox.shrink(),
                         ],
                       ),
                     ),
