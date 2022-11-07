@@ -1,7 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'Utils/Datacostants.dart';
-import 'databasehelper.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
 class LoginPage extends StatefulWidget {
@@ -25,8 +24,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   bool shouldCreateGrid = false, isContain = false;
   FocusNode _rowFocus = FocusNode();
   FocusNode _columnFocus = FocusNode();
-
-  Helper db = Helper();
 
   @override
   void initState() {
@@ -80,7 +77,22 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       width: width - 100,
       child: TextField(
         controller: controller,
-        onChanged: (value) {},
+        onChanged: (value) {
+          if (_rowController.text.isNotEmpty &&
+              _columnController.text.isNotEmpty) {
+            setState(() {
+              shouldCreateGrid = true;
+            });
+            int rowLength = int.parse(_rowController.text);
+            int columnLength = int.parse(_columnController.text);
+            noOfTextField = rowLength * columnLength;
+            for (var j = 0; j < noOfTextField; j++) {
+              final controller = TextEditingController();
+              _gridTextControllers.add(controller);
+              list.add(j);
+            }
+          }
+        },
         focusNode: _columnFocus,
         onSubmitted: (value) {
           if (value.isEmpty) {
@@ -179,14 +191,16 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       child: Column(
                         children: [
                           const SizedBox(
-                            height: 20,
+                            height: 30,
                           ),
                           SizedBox(
                             width: width - 100,
+                            height: 50,
                             child: TextField(
                               controller: _searchController,
                               onChanged: (value) {
                                 searchText = _searchController.text;
+
                                 print("list => $list");
                                 for (var i = 0;
                                     i < _gridTextControllers.length;
@@ -210,6 +224,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               keyboardType: TextInputType.text,
                               decoration: const InputDecoration(
                                   // labelText: "Search text",
+                                  prefixIcon: Icon(Icons.search_rounded),
                                   hintText: "Search text",
                                   focusedBorder: OutlineInputBorder(
                                       borderRadius:
@@ -227,7 +242,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             ),
                           ),
                           const SizedBox(
-                            height: 20,
+                            height: 40,
                           ),
                           // for(var x=0;x< noOfTextField;x++)
                           //   _gridTextControllers.any((element) => element.text.toLowerCase().contains(searchText.toLowerCase()))?
@@ -258,7 +273,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                           ? list[index] == true
                                               ? Colors.greenAccent
                                               : Colors.white
-                                          : Colors.grey,
+                                          : Colors.white.withOpacity(0.4),
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(18))),
                                   child: Center(
@@ -267,6 +282,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                     dragStartBehavior: DragStartBehavior.start,
                                     textDirection: TextDirection.ltr,
                                     decoration: InputDecoration(
+
                                         contentPadding: EdgeInsets.symmetric(
                                             horizontal: 25, vertical: 15),
                                         border: InputBorder.none,

@@ -1,4 +1,4 @@
-import 'package:clubhouse/databasehelper.dart';
+
 import 'package:clubhouse/splashScreen.dart';
 import 'package:flutter/material.dart';
 
@@ -6,8 +6,6 @@ import 'login.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  Helper.initDB();
   runApp(const MyApp());
 }
 
