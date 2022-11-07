@@ -184,6 +184,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 animation: _columnAnimationController,
                 builder: (context, child) =>
                     columnWidget(context, child, "Columns", _columnController)),
+
             shouldCreateGrid
                 ? Expanded(
                     child: SingleChildScrollView(
@@ -200,7 +201,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               controller: _searchController,
                               onChanged: (value) {
                                 searchText = _searchController.text;
-
                                 print("list => $list");
                                 for (var i = 0;
                                     i < _gridTextControllers.length;
@@ -224,7 +224,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               keyboardType: TextInputType.text,
                               decoration: const InputDecoration(
                                   // labelText: "Search text",
-                                  prefixIcon: Icon(Icons.search_rounded),
+                                  // prefixIcon: Icon(Icons.search_rounded),
                                   hintText: "Search text",
                                   focusedBorder: OutlineInputBorder(
                                       borderRadius:
